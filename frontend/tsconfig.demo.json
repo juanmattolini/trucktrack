@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/demo"
+  },
+  "files": [
+    "src/main.demo.ts"
+  ],
+  "include": [
+    "src/**/*.d.ts"
+  ]
+}

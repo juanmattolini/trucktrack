@@ -1,0 +1,164 @@
+<div class="demo-shell">
+  <aside class="sidebar">
+    <a class="brand" href="#" aria-label="TruckTrack inicio">
+      <span class="brand-mark"><span class="material-icons">local_shipping</span></span>
+      <span class="brand-name">truck<span>track</span></span>
+    </a>
+
+    <div class="workspace-label">PLATAFORMA DE FLOTA</div>
+    <nav class="side-nav" aria-label="Navegación principal">
+      <a class="nav-link active" href="#mapa" aria-current="page">
+        <span class="material-icons">map</span>
+        <span>Mapa en vivo</span>
+      </a>
+      <a class="nav-link" href="#flota">
+        <span class="material-icons">local_shipping</span>
+        <span>Vehículos</span>
+        <span class="nav-count">{{ trucks().length }}</span>
+      </a>
+      <a class="nav-link" href="#actividad">
+        <span class="material-icons">route</span>
+        <span>Recorridos</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="demo-note">
+        <span class="material-icons">science</span>
+        <div>
+          <strong>Modo demostración</strong>
+          <p>Los datos de esta vista son simulados.</p>
+        </div>
+      </div>
+      <div class="account-row">
+        <div class="avatar">TT</div>
+        <div class="account-copy"><strong>TruckTrack</strong><span>Vista de flota</span></div>
+        <span class="material-icons account-more">more_horiz</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content" id="mapa">
+    <header class="topbar">
+      <div class="breadcrumb"><span>Operaciones</span><span class="material-icons">chevron_right</span><strong>Mapa en vivo</strong></div>
+      <div class="topbar-actions">
+        <span class="demo-badge"><span></span> DEMO</span>
+        <span class="topbar-divider"></span>
+        <button class="icon-button" type="button" aria-label="Notificaciones">
+          <span class="material-icons">notifications_none</span><i></i>
+        </button>
+        <div class="top-avatar">JD</div>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <section class="page-heading">
+        <div>
+          <div class="eyebrow">{{ todayLabel }}</div>
+          <h1>Seguimiento de flota</h1>
+          <p>Una vista clara de cada vehículo, en cualquier momento.</p>
+        </div>
+        <div class="live-status"><span class="pulse-dot"></span><span>Simulación activa</span><span class="live-separator"></span><span>Actualiza cada 5 s</span></div>
+      </section>
+
+      <section class="metrics" aria-label="Resumen de la flota">
+        <article class="metric-card">
+          <div class="metric-icon green"><span class="material-icons">local_shipping</span></div>
+          <div><span class="metric-label">Vehículos en ruta</span><strong>{{ movingCount() }} <small>/ {{ trucks().length }}</small></strong></div>
+          <span class="metric-trend positive"><span class="material-icons">trending_up</span> Flota</span>
+        </article>
+        <article class="metric-card">
+          <div class="metric-icon blue"><span class="material-icons">speed</span></div>
+          <div><span class="metric-label">Velocidad promedio</span><strong>{{ averageSpeed() }} <small>km/h</small></strong></div>
+          <span class="metric-trend">En ruta</span>
+        </article>
+        <article class="metric-card">
+          <div class="metric-icon amber"><span class="material-icons">pause_circle</span></div>
+          <div><span class="metric-label">Detenidos</span><strong>{{ trucks().length - movingCount() - offlineCount() }}</strong></div>
+          <span class="metric-trend">En espera</span>
+        </article>
+        <article class="metric-card">
+          <div class="metric-icon purple"><span class="material-icons">near_me</span></div>
+          <div><span class="metric-label">Zona de cobertura</span><strong>Buenos Aires</strong></div>
+          <span class="metric-trend">Argentina</span>
+        </article>
+      </section>
+
+      <section class="tracking-layout" id="flota">
+        <article class="map-panel" id="actividad">
+          <div class="panel-heading">
+            <div>
+              <h2>Mapa de seguimiento</h2>
+              <p>Posiciones de vehículos y rutas planificadas</p>
+            </div>
+            <button type="button" class="map-action" (click)="centerMap()">
+              <span class="material-icons">my_location</span> Centrar mapa
+            </button>
+          </div>
+          <div class="map-canvas" #mapCanvas aria-label="Mapa de seguimiento de camiones en Buenos Aires"></div>
+          <div class="map-legend">
+            <span><i class="legend-dot moving"></i> En ruta <b>{{ movingCount() }}</b></span>
+            <span><i class="legend-dot stopped"></i> Detenido <b>{{ trucks().length - movingCount() - offlineCount() }}</b></span>
+            <span><i class="legend-dot offline"></i> Sin conexión <b>{{ offlineCount() }}</b></span>
+            <span class="map-attribution">Posiciones simuladas</span>
+          </div>
+        </article>
+
+        <aside class="fleet-panel">
+          <div class="fleet-heading">
+            <div><h2>Vehículos</h2><span>{{ filteredTrucks().length }} unidades visibles</span></div>
+            <button type="button" class="more-button" aria-label="Más opciones"><span class="material-icons">more_horiz</span></button>
+          </div>
+          <label class="search-box">
+            <span class="material-icons">search</span>
+            <input type="search" placeholder="Buscar vehículo o conductor" [value]="searchTerm()" (input)="setSearch($event)">
+            <kbd>/</kbd>
+          </label>
+
+          <div class="filter-row" aria-label="Filtrar vehículos">
+            <button type="button" [class.selected]="activeFilter() === 'all'" (click)="selectFilter('all')">Todos</button>
+            <button type="button" [class.selected]="activeFilter() === 'moving'" (click)="selectFilter('moving')">En ruta</button>
+            <button type="button" [class.selected]="activeFilter() === 'stopped'" (click)="selectFilter('stopped')">Detenidos</button>
+            <button type="button" [class.selected]="activeFilter() === 'offline'" (click)="selectFilter('offline')">Sin conexión</button>
+          </div>
+
+          <div class="truck-list">
+            @for (truck of filteredTrucks(); track truck.id) {
+              <button
+                type="button"
+                class="truck-card"
+                [class.active]="selectedTruckId() === truck.id"
+                (click)="selectTruck(truck)">
+                <span [class]="'truck-icon ' + truck.status"><span class="material-icons">local_shipping</span></span>
+                <span class="truck-copy">
+                  <span class="truck-title"><strong>{{ truck.name }}</strong><span [class]="'status-chip ' + truck.status">{{ statusLabel(truck.status) }}</span></span>
+                  <span class="truck-driver">{{ truck.driver }}</span>
+                  <span class="truck-meta">
+                    <span><span class="material-icons">speed</span>{{ truck.speed }} km/h</span>
+                    <span><span class="material-icons">near_me</span>{{ truck.destination }}</span>
+                  </span>
+                </span>
+                <span class="material-icons card-chevron">chevron_right</span>
+              </button>
+            } @empty {
+              <div class="empty-state">
+                <span class="material-icons">search_off</span>
+                <strong>No encontramos vehículos</strong>
+                <span>Prueba con otro nombre o filtro.</span>
+              </div>
+            }
+          </div>
+
+          @if (selectedTruck(); as truck) {
+            <div class="selected-summary">
+              <div class="summary-label">VEHÍCULO SELECCIONADO</div>
+              <div class="summary-title"><strong>{{ truck.id }}</strong><span class="status-text" [class]="truck.status"><i></i>{{ statusLabel(truck.status) }}</span></div>
+              <div class="summary-destination"><span class="material-icons">flag</span><span>{{ truck.destination }}</span></div>
+            </div>
+          }
+        </aside>
+      </section>
+      <footer class="page-footer"><span>TruckTrack Demo</span><span>Datos sintéticos · Sin conexión a servicios reales</span></footer>
+    </div>
+  </main>
+</div>

@@ -24,6 +24,26 @@ npm start
 
 **Access:** http://localhost:4200
 
+## Demo estática en GitHub Pages
+
+La demo funciona de forma independiente de la aplicación conectada: usa posiciones y recorridos sintéticos, no inicia sesión ni realiza llamadas al backend. El mapa usa teselas públicas de OpenStreetMap y necesita conexión a Internet.
+
+Para ejecutarla localmente:
+
+```bash
+cd frontend
+npm ci --legacy-peer-deps
+npm run start:demo
+```
+
+Abre http://localhost:4200. Para generar el artefacto con la ruta de GitHub Pages:
+
+```bash
+npm run build:demo
+```
+
+El workflow `.github/workflows/pages.yml` publica `frontend/dist/trucktrack-demo/browser` en Pages al actualizar `master`. Después de integrar el workflow, configura **Settings → Pages → Build and deployment → Source: GitHub Actions** en el repositorio. La URL resultante usa la ruta `/trucktrack/`.
+
 ## Features
 
 - **Live Map** - Real-time truck positions with Leaflet
