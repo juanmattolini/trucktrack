@@ -1,11 +1,10 @@
 <div class="demo-shell">
   <aside class="sidebar">
-    <a class="brand" href="#" aria-label="TruckTrack inicio">
-      <span class="brand-mark"><span class="material-icons">local_shipping</span></span>
-      <span class="brand-name">truck<span>track</span></span>
+    <a class="brand" href="#mapa" aria-label="MicroTrack inicio">
+      <span class="brand-name">Micro<span>Track</span></span>
     </a>
 
-    <div class="workspace-label">PLATAFORMA DE FLOTA</div>
+    <div class="workspace-label">MICROTRACK · FLOTA</div>
     <nav class="side-nav" aria-label="Navegación principal">
       <a class="nav-link active" href="#mapa" aria-current="page">
         <span class="material-icons">map</span>
@@ -20,6 +19,11 @@
         <span class="material-icons">route</span>
         <span>Recorridos</span>
       </a>
+      <a class="nav-link" href="#alertas">
+        <span class="material-icons">notifications_active</span>
+        <span>Alertas demo</span>
+        <span class="nav-count">{{ alertCount() }}</span>
+      </a>
     </nav>
 
     <div class="sidebar-bottom">
@@ -27,16 +31,21 @@
         <span class="material-icons">science</span>
         <div>
           <strong>Modo demostración</strong>
-          <p>Los datos de esta vista son simulados.</p>
+          <p>Posiciones y eventos simulados. Sin conexión GPS.</p>
         </div>
       </div>
       <div class="account-row">
-        <div class="avatar">TT</div>
-        <div class="account-copy"><strong>TruckTrack</strong><span>Vista de flota</span></div>
+        <div class="avatar">MT</div>
+        <div class="account-copy"><strong>MicroTrack</strong><span>Vista de flota</span></div>
         <span class="material-icons account-more">more_horiz</span>
       </div>
     </div>
   </aside>
+  <nav class="mobile-nav" aria-label="Accesos rápidos">
+    <a href="#mapa"><span class="material-icons">map</span>Mapa</a>
+    <a href="#flota"><span class="material-icons">local_shipping</span>Flota</a>
+    <a href="#alertas"><span class="material-icons">notifications_active</span>Alertas</a>
+  </nav>
 
   <main class="main-content" id="mapa">
     <header class="topbar">
@@ -58,7 +67,7 @@
           <h1>Seguimiento de flota</h1>
           <p>Una vista clara de cada vehículo, en cualquier momento.</p>
         </div>
-        <div class="live-status"><span class="pulse-dot"></span><span>Simulación activa</span><span class="live-separator"></span><span>Actualiza cada 5 s</span></div>
+        <div class="live-status" [class.paused]="!isPlaying()"><span class="pulse-dot"></span><span>{{ isPlaying() ? 'Simulación activa' : 'Simulación pausada' }}</span><span class="live-separator"></span><span>GPS de demostración</span></div>
       </section>
 
       <section class="metrics" aria-label="Resumen de la flota">
@@ -89,17 +98,53 @@
           <div class="panel-heading">
             <div>
               <h2>Mapa de seguimiento</h2>
-              <p>Posiciones de vehículos y rutas planificadas</p>
+              <p>Posiciones sintéticas · {{ geofenceCount() }} geocercas activas</p>
             </div>
             <button type="button" class="map-action" (click)="centerMap()">
               <span class="material-icons">my_location</span> Centrar mapa
             </button>
           </div>
           <div class="map-canvas" #mapCanvas aria-label="Mapa de seguimiento de camiones en Buenos Aires"></div>
+          @if (selectedTruck(); as selected) {
+            <div class="playback-bar">
+              <div class="playback-copy">
+                <span class="material-icons">route</span>
+                <div><strong>Recorrido simulado</strong><span>{{ selected.id }} · Parada {{ selected.routeIndex + 1 }} de {{ selected.route.length }}</span></div>
+              </div>
+              <div class="playback-controls">
+                <button type="button" class="step-button" aria-label="Punto anterior" (click)="stepPlayback(-1)">
+                  <span class="material-icons">skip_previous</span>
+                </button>
+                <button
+                  type="button"
+                  class="play-button"
+                  [attr.aria-label]="isPlaying() ? 'Pausar simulación' : 'Reanudar simulación'"
+                  (click)="togglePlayback()">
+                  <span class="material-icons">{{ isPlaying() ? 'pause' : 'play_arrow' }}</span>
+                </button>
+                <button type="button" class="step-button" aria-label="Punto siguiente" (click)="stepPlayback(1)">
+                  <span class="material-icons">skip_next</span>
+                </button>
+              </div>
+              <label class="timeline-control">
+                <span>Inicio</span>
+                <input
+                  type="range"
+                  min="0"
+                  [max]="selected.route.length - 1"
+                  [value]="selected.routeIndex"
+                  [style.--progress]="selectedRouteProgress() + '%'"
+                  [attr.aria-label]="'Avance del recorrido de ' + selected.name"
+                  (input)="seekPlayback($event)">
+                <span>Ahora</span>
+              </label>
+            </div>
+          }
           <div class="map-legend">
             <span><i class="legend-dot moving"></i> En ruta <b>{{ movingCount() }}</b></span>
             <span><i class="legend-dot stopped"></i> Detenido <b>{{ trucks().length - movingCount() - offlineCount() }}</b></span>
             <span><i class="legend-dot offline"></i> Sin conexión <b>{{ offlineCount() }}</b></span>
+            <span><i class="legend-dot geofence"></i> Geocercas <b>{{ geofenceCount() }}</b></span>
             <span class="map-attribution">Posiciones simuladas</span>
           </div>
         </article>
@@ -135,6 +180,7 @@
                   <span class="truck-driver">{{ truck.driver }}</span>
                   <span class="truck-meta">
                     <span><span class="material-icons">speed</span>{{ truck.speed }} km/h</span>
+                    <span><span class="material-icons">badge</span>{{ truck.plate }}</span>
                     <span><span class="material-icons">near_me</span>{{ truck.destination }}</span>
                   </span>
                 </span>
@@ -149,16 +195,51 @@
             }
           </div>
 
-          @if (selectedTruck(); as truck) {
-            <div class="selected-summary">
-              <div class="summary-label">VEHÍCULO SELECCIONADO</div>
-              <div class="summary-title"><strong>{{ truck.id }}</strong><span class="status-text" [class]="truck.status"><i></i>{{ statusLabel(truck.status) }}</span></div>
-              <div class="summary-destination"><span class="material-icons">flag</span><span>{{ truck.destination }}</span></div>
-            </div>
-          }
         </aside>
       </section>
-      <footer class="page-footer"><span>TruckTrack Demo</span><span>Datos sintéticos · Sin conexión a servicios reales</span></footer>
+
+      <section class="demo-insights">
+        @if (selectedTruck(); as truck) {
+          <article class="unit-detail-panel">
+            <div class="insight-heading">
+              <div><h2>Detalle de unidad</h2><span>Información de demostración</span></div>
+              <span class="material-icons heading-icon">local_shipping</span>
+            </div>
+            <div class="unit-profile">
+              <div class="unit-avatar"><span class="material-icons">local_shipping</span></div>
+              <div class="unit-name"><strong>{{ truck.name }}</strong><span>{{ truck.driver }}</span></div>
+              <span [class]="'connection-state ' + (truck.status === 'offline' ? 'offline' : 'connected')"><i></i>{{ connectionLabel(truck.status) }}</span>
+            </div>
+            <div class="unit-details">
+              <div><span>Patente</span><strong>{{ truck.plate }}</strong></div>
+              <div><span>Velocidad actual</span><strong>{{ truck.speed }} <small>km/h</small></strong></div>
+              <div><span>Última actualización</span><strong>{{ lastUpdateLabel(truck) }}</strong></div>
+              <div><span>Conexión</span><strong [class.disconnected]="truck.status === 'offline'">{{ connectionLabel(truck.status) }}</strong></div>
+            </div>
+            <div class="unit-destination"><span class="material-icons">flag</span><span>Destino</span><strong>{{ truck.destination }}</strong></div>
+          </article>
+        }
+
+        <article class="alerts-panel" id="alertas">
+          <div class="insight-heading">
+            <div><h2>Actividad y alertas demo</h2><span>Eventos simulados recientes</span></div>
+            <span class="alert-counter">{{ alertCount() }} eventos</span>
+          </div>
+          <div class="alerts-list">
+            @for (alert of alerts(); track alert.id) {
+              <div class="alert-item">
+                <span [class]="'alert-icon ' + alert.type"><span class="material-icons">{{ alertIcon(alert.type) }}</span></span>
+                <div class="alert-copy">
+                  <strong>{{ alert.title }}</strong>
+                  <span>{{ alert.truckId }} · {{ alert.detail }}</span>
+                </div>
+                <time>{{ alertTime(alert.createdAt) }}</time>
+              </div>
+            }
+          </div>
+        </article>
+      </section>
+      <footer class="page-footer"><span>MicroTrack Demo</span><span>Datos sintéticos · Sin conexión a servicios reales</span></footer>
     </div>
   </main>
 </div>

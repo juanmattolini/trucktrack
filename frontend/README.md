@@ -26,7 +26,7 @@ npm start
 
 ## Demo estática en GitHub Pages
 
-La demo funciona de forma independiente de la aplicación conectada: usa posiciones y recorridos sintéticos, no inicia sesión ni realiza llamadas al backend. El mapa usa teselas públicas de OpenStreetMap y necesita conexión a Internet.
+La demo se presenta como **MicroTrack** y funciona de forma independiente de la aplicación conectada: usa posiciones y recorridos sintéticos, ofrece controles de reproducción, geocercas y alertas de ejemplo, y no inicia sesión ni realiza llamadas al backend. Los colores de marca se pueden ajustar en las variables CSS de `demo.component.scss`. El mapa usa teselas públicas de OpenStreetMap y necesita conexión a Internet.
 
 Para ejecutarla localmente:
 
