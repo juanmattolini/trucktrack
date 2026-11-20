@@ -66,6 +66,43 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "demo": {
+              "browser": "src/main.demo.ts",
+              "index": {
+                "input": "src/index.demo.html",
+                "output": "index.html"
+              },
+              "outputPath": "dist/trucktrack-demo",
+              "tsConfig": "tsconfig.demo.json",
+              "baseHref": "/trucktrack/",
+              "optimization": true,
+              "outputHashing": "all",
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "14kb",
+                  "maximumError": "16kb"
+                }
+              ]
+            },
+            "demo-local": {
+              "browser": "src/main.demo.ts",
+              "index": {
+                "input": "src/index.demo.html",
+                "output": "index.html"
+              },
+              "outputPath": "dist/trucktrack-demo",
+              "tsConfig": "tsconfig.demo.json",
+              "baseHref": "/",
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
@@ -78,6 +115,9 @@
             },
             "development": {
               "buildTarget": "frontend:build:development"
+            },
+            "demo-local": {
+              "buildTarget": "frontend:build:demo-local"
             }
           },
           "defaultConfiguration": "development"
