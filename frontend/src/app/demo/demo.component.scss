@@ -1,15 +1,24 @@
 :host {
   display: block;
   min-height: 100vh;
-  color: #172033;
+  color: #e5edf7;
+  color-scheme: dark;
   font-family: 'DM Sans', Arial, sans-serif;
-  --status-moving-color: #168b69;
-  --status-stopped-color: #e69a36;
-  --status-offline-color: #8a94a6;
+  --page-background: #0b111b;
+  --surface: #121b29;
+  --surface-raised: #172334;
+  --surface-inset: #0e1723;
+  --border-color: #263448;
+  --text-primary: #e5edf7;
+  --text-secondary: #a7b5c8;
+  --text-muted: #8292a8;
+  --status-moving-color: #32bd8d;
+  --status-stopped-color: #efa93d;
+  --status-offline-color: #a0adbf;
   --brand-primary: var(--status-moving-color);
-  --brand-accent: #54c3a0;
-  --brand-ink: #142031;
-  --brand-soft: #e8f6f1;
+  --brand-accent: #73dfbd;
+  --brand-ink: #0d1522;
+  --brand-soft: #163729;
 }
 
 button,
@@ -1424,4 +1433,286 @@ h2 {
     gap: 5px;
     font-size: 8px;
   }
+}
+
+.demo-shell {
+  color: var(--text-primary);
+  background: var(--page-background);
+}
+
+.sidebar {
+  background: var(--brand-ink);
+}
+
+.nav-link.active {
+  background: #1a2a3e;
+}
+
+.demo-note {
+  background: #141f2e;
+  border-color: #26364a;
+}
+
+.account-row {
+  border-top-color: #263448;
+}
+
+.topbar,
+.metric-card,
+.map-panel,
+.fleet-panel,
+.unit-detail-panel,
+.alerts-panel {
+  background: var(--surface);
+  border-color: var(--border-color);
+}
+
+.topbar {
+  border-bottom-color: var(--border-color);
+}
+
+.playback-bar,
+.panel-heading,
+.map-legend,
+.unit-destination {
+  border-color: var(--border-color);
+}
+
+.breadcrumb strong,
+h1,
+h2,
+.metric-card strong,
+.playback-copy strong,
+.map-legend b,
+.truck-title strong,
+.empty-state strong,
+.unit-name strong,
+.unit-details strong,
+.unit-destination strong,
+.alert-copy strong {
+  color: var(--text-primary);
+}
+
+.workspace-label,
+.eyebrow,
+.breadcrumb,
+.page-heading p,
+.live-status,
+.metric-label,
+.metric-card strong small,
+.panel-heading p,
+.fleet-heading > div > span,
+.truck-driver,
+.truck-meta > span,
+.playback-copy span:not(.material-icons),
+.timeline-control,
+.unit-name span,
+.unit-details span,
+.unit-details small,
+.insight-heading > div > span,
+.alert-copy span,
+.alert-item time,
+.page-footer,
+.map-attribution {
+  color: var(--text-muted);
+}
+
+.metric-card,
+.map-panel,
+.fleet-panel,
+.unit-detail-panel,
+.alerts-panel {
+  box-shadow: 0 4px 14px rgb(0 0 0 / 14%);
+}
+
+.metric-icon.blue,
+.alert-icon.geofence-exit {
+  color: #8bb9ff;
+  background: #1b2b43;
+}
+
+.metric-icon.amber,
+.alert-icon {
+  color: var(--status-stopped-color);
+  background: #382d1c;
+}
+
+.alert-icon.geofence-entry {
+  color: var(--status-moving-color);
+  background: var(--brand-soft);
+}
+
+.metric-icon.purple {
+  color: #b6a8ff;
+  background: #292442;
+}
+
+.metric-trend {
+  color: var(--text-muted);
+  background: var(--surface-raised);
+}
+
+.metric-trend.positive {
+  color: var(--status-moving-color);
+  background: var(--brand-soft);
+}
+
+.playback-bar {
+  border-top-color: var(--border-color);
+  border-bottom-color: var(--border-color);
+}
+
+.playback-controls button,
+.filter-row button {
+  color: var(--text-secondary);
+  background: var(--surface-raised);
+}
+
+.timeline-control input {
+  background: linear-gradient(90deg, var(--brand-primary) var(--progress, 0%), #334256 var(--progress, 0%));
+}
+
+.timeline-control input::-webkit-slider-thumb,
+.timeline-control input::-moz-range-thumb {
+  background: var(--text-primary);
+}
+
+.topbar-divider,
+.live-separator {
+  background: var(--border-color);
+}
+
+.icon-button,
+.more-button {
+  color: var(--text-secondary);
+}
+
+.icon-button i {
+  border-color: var(--surface);
+}
+
+.top-avatar {
+  color: #c6dcff;
+  background: #233750;
+}
+
+.map-action {
+  color: var(--text-secondary);
+  background: var(--surface-raised);
+  border-color: var(--border-color);
+}
+
+.map-canvas {
+  background: #101a28;
+}
+
+.more-button {
+  border-color: var(--border-color);
+}
+
+.search-box {
+  color: var(--text-muted);
+  background: var(--surface-inset);
+  border-color: var(--border-color);
+}
+
+.search-box input {
+  color: var(--text-primary);
+}
+
+.search-box kbd {
+  color: var(--text-muted);
+  background: var(--surface-raised);
+  border-color: var(--border-color);
+}
+
+.filter-row button.selected,
+.truck-card.active {
+  border-color: #285742;
+}
+
+.truck-card {
+  border-bottom-color: #243246;
+}
+
+.truck-card:hover {
+  background: #182537;
+}
+
+.truck-icon.stopped,
+.status-chip.stopped {
+  background: #382d1c;
+}
+
+.truck-icon.offline,
+.status-chip.offline,
+.connection-state.offline,
+.alert-icon.offline {
+  background: #273243;
+}
+
+.truck-meta .material-icons,
+.card-chevron,
+.heading-icon,
+.unit-destination .material-icons {
+  color: var(--text-muted);
+}
+
+.unit-profile,
+.alert-item,
+.alert-counter {
+  background: var(--surface-raised);
+  border-color: var(--border-color);
+}
+
+.alert-counter {
+  color: var(--text-secondary);
+}
+
+.mobile-nav {
+  background: var(--brand-ink);
+  border-top-color: var(--border-color);
+}
+
+.mobile-nav a {
+  color: var(--text-secondary);
+}
+
+:host ::ng-deep .marker-pin {
+  border-color: var(--surface);
+}
+
+:host ::ng-deep .leaflet-tile {
+  filter: brightness(0.65) invert(1) hue-rotate(180deg) saturate(0.65) brightness(0.65);
+}
+
+:host ::ng-deep .leaflet-popup-content-wrapper,
+:host ::ng-deep .leaflet-popup-tip {
+  color: var(--text-primary);
+  background: var(--surface);
+}
+
+:host ::ng-deep .leaflet-popup-content {
+  color: var(--text-primary);
+}
+
+:host ::ng-deep .leaflet-control-zoom a {
+  color: var(--text-primary);
+  background: var(--surface);
+  border-color: var(--border-color);
+}
+
+:host ::ng-deep .leaflet-control-zoom a:hover {
+  background: var(--surface-raised);
+}
+
+:host ::ng-deep .demo-geofence-label {
+  color: #c2b9ff;
+  background: rgb(18 27 41 / 92%);
+  border-color: rgb(145 130 226 / 45%);
+}
+
+.demo-shell :focus-visible {
+  outline: 2px solid var(--brand-accent);
+  outline-offset: 2px;
 }
